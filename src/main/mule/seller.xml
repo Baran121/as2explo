@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:as2-mule4="http://www.mulesoft.org/schema/mule/as2-mule4"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/as2-mule4 http://www.mulesoft.org/schema/mule/as2-mule4/current/mule-as2-mule4.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<as2-mule4:listener-config name="AS2_Connector_Listener_config" doc:name="AS2 Connector Listener config" 
+	doc:id="c00ceab7-7a50-4e37-8bd6-add6827a7b29" httpListenerConfig="HTTP_Listener_config1" 
+	securityLevel="ENCRYPTED">
+		<as2-mule4:self-config as2Name="amazon" x509Alias="dev.selling" email="dev.selling@amazon.com" />
+		<as2-mule4:partner-config as2Name="shell" x509Alias="dev.buying" email="dev.buying@shell.com" />
+		<as2-mule4:key-store-config keystorePassword="Admin123!" keystorePath="certs/dev.selling.amazon.com" 
+		privateKeyPassword="Admin123!" />
+	</as2-mule4:listener-config>
+	<http:listener-config name="HTTP_Listener_config1" doc:name="HTTP Listener config" 
+	doc:id="f7a39a8a-aff7-4846-842c-549cb641d219" >
+		<http:listener-connection host="0.0.0.0" port="8090" />
+	</http:listener-config>
+	<flow name="Seller-Flow" doc:id="11e48beb-a489-46dd-bb09-eff185ed9f8c" >
+		<as2-mule4:as2-listener doc:id="15fd93c6-fcec-4103-87be-e7540435a40e" doc:name="" config-ref="AS2_Connector_Listener_config" path="/seller"/>
+		<foreach doc:name="For Each" doc:id="5480c1c0-6adf-43d1-b914-227edfd25659" >
+			<logger level="INFO" doc:name="Logger" doc:id="80cec76c-191b-4fa1-aeb0-eb46710b5405" message='#[payload]' />
+		</foreach>
+		<logger level="INFO" doc:name="Logger" doc:id="dc454612-691f-49d4-b77a-e9c0d3ac5106" message="processed"/>
+	
+</flow>
+	
+</mule>

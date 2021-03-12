@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:x12="http://www.mulesoft.org/schema/mule/x12" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:as2-mule4="http://www.mulesoft.org/schema/mule/as2-mule4" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/as2-mule4 http://www.mulesoft.org/schema/mule/as2-mule4/current/mule-as2-mule4.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/x12 http://www.mulesoft.org/schema/mule/x12/current/mule-x12.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="c45d68a1-fbd1-4ec3-8e17-6ca5c2481b3d" >
+		<http:listener-connection host="0.0.0.0" port="8082" />
+	</http:listener-config>
+	
+	
+	<as2-mule4:send-config name="AS2_Connector_Send_config" doc:name="AS2 Connector Send config" doc:id="6d758cb7-fd55-4fac-9ffb-2566106c70d7" >
+		<as2-mule4:connection connectionIdleTimeoutUnits="NANOSECONDS" partnerURL="http://localhost:8090/seller" />
+		<as2-mule4:self-config as2Name="shell" x509Alias="dev.buying" email="dev.buying@shell.com" />
+		<as2-mule4:partner-config as2Name="amazon" x509Alias="dev.selling" email="dev.selling@amazon.com" />
+		<as2-mule4:requester-config encryptionAlgorithm="AES192_GCM" compressionType="ZLIB" messageIntegrityCheckAlgorithm="SHA1" mdnMessageIntegrityCheckAlgorithm="SHA1" requestReceipt="SIGNED_REQUIRED"/>
+		<as2-mule4:keystore-config keystorePassword="Admin123!" keystorePath="certs/dev.buying.shell.com" privateKeyPassword="Admin123!" />
+	</as2-mule4:send-config>
+	<flow name="Buyer-Flow" doc:id="11b237d4-81c6-4723-8ebb-4fce3ef90a11" >
+		<http:listener doc:name="Listener" doc:id="aec47cb8-50e6-4495-baa1-acc8c1e99c45" config-ref="HTTP_Listener_config" path="buyer"/>
+		<as2-mule4:send-with-sync-mdn doc:id="08364fcc-aeda-4598-bd19-0db642257682" doc:name="" config-ref="AS2_Connector_Send_config"/>
+	</flow>
+</mule>
